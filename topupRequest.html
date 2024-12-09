@@ -1,0 +1,248 @@
+<!--
+  @description       : This component has been used for OTP Topup purpose. It shows the Topup Summary Page in OTP Flow.
+  @author            : E. Shalini
+  @group             : Cloudkaptan Consultancy Services Pvt. Ltd.
+  @last modified on  : 29-09-2024
+  @last modified by  : Rahul Raut
+-->
+<template>
+	<div class="slds-m-top_medium slds-m-bottom_x-large lgc-bg outer-template">
+		<h2 class="slds-m-bottom_medium font-utility-heading" style="text-align:center; margin-top: 2.5rem;" onchange={widthFloatHandler}>
+			{accName}
+		</h2>
+		<br>
+		<div class="request-accname-wrapper slds-p-around_medium font-utility-heading"
+			style="text-align: center; font-size: 20px;">
+			<span class="slds-m-bottom_medium">
+				Top up Request
+			</span>
+		</div>
+		<template if:true={loaded}>
+			<div class="full-screen-spinner" style="position: fixed;
+			top: 0;
+			left: 0;
+			 width: 100vw;
+			height: 100vh;
+			z-index: 9999;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			background-color: rgba(255, 255, 255, 0.8);">
+		
+				<!-- Loading spinner component or markup -->
+		
+				<lightning-spinner alternative-text="Loading..." size="large"></lightning-spinner>
+		
+			</div>
+		
+		</template>
+		<div class="slds-p-around_medium lgc-bg content-wrapper outer-template">
+			<h2 class="font-utility-heading slds-m-bottom_medium">
+				Loan Details
+			</h2>
+			<lightning-input type="text" label="Top up amount" onchange={amountHandler} required="true" class="loan-amount input-field">
+			</lightning-input>
+			<div class="slds-form-element lightning-label ">
+				<label class="slds-form-element__label">
+					<span class="">Loan Term</span>
+				</label>
+				<div class="slds-form-element__control">
+					<div class="slds-select_container">
+						<select class="slds-select loan-term" id = 'termDom' onchange={termHandler} required>
+						<option value="">Select</option>
+						    <option value="1">1 Year</option>
+							<option value="2">2 Years</option>
+							<option value="3">3 Years</option>
+							<option value="4">4 Years</option>
+							<option value="5">5 Years</option>
+							<option value="6">6 Years</option>
+							<option value="7">7 Years</option>
+						</select>
+					</div>
+				</div>
+			</div>
+            <div class="slds-form-element lightning-label ">
+				<label class="slds-form-element__label">
+								<span class="">Repayment Frequency</span>
+				</label>
+				<div class="slds-form-element__control">
+					<div class="slds-select_container">
+						<select class="slds-select loan-freq" id='freqDom' onchange={freqHandler} required>
+							<option value="">Select</option>
+							<option value="WEEKLY">WEEKLY</option>
+							<option value="BI-WEEKLY">FORTNIGHTLY</option>
+							<option value="MONTHLY">MONTHLY</option>
+						</select>
+					</div>
+				</div>
+			</div>
+			<div class="slds-form-element lightning-label ">
+				<label class="slds-form-element__label">
+										<span class="">Loan Purpose</span>
+								</label>
+				<div class="slds-form-element__control">
+					<div class="slds-select_container">
+						<select class="slds-select loan-purpose" onchange={purposeHandler} required disabled={isHit}>
+														<option value="">Select</option>
+														<option value="Car purchase">Car purchase</option>
+														<option value="Debt consolidation">Debt consolidation</option>
+														<option value="Home improvements">Home improvements</option>
+														<option value="Travel">Travel</option>
+														<option value="Medical/Dental">Medical/Dental</option>
+														<option value="Small debts">Small debts</option>
+														<option value="Household furnishings">Household furnishings</option>
+														<option value="Education expenses">Education expenses</option>
+														<option value="Car/Mechanical Repairs">Car/Mechanical Repairs</option>
+														<option value="Boat/Caravan/Trailer">Boat/Caravan/Trailer</option>
+														<option value="Motorcycle/Scooter">Motorcycle/Scooter</option>
+														<option value="Personal goods">Personal goods</option>
+														<option value="Tax debts">Tax debts</option>
+														<option value="Wedding/Events">Wedding/Events</option>
+														<option value="Funeral">Funeral</option>
+												</select>
+					</div>
+				</div>
+			</div>
+			<br>
+			<h2 class="font-utility-heading slds-m-bottom_medium">
+				Address Details
+			</h2>
+			<div class="slds-form-element lightning-label">
+				<label class="slds-form-element__label">
+					<span class="">Residential status</span>
+				</label>
+				<div class="slds-form-element__control">
+					<div class="slds-select_container">
+						<select class="slds-select res-status" onchange={resStatusHandler} required disabled={isHit}>
+							<option value="">Select</option>
+							<option value="Renting">Renting</option>
+							<option value="Boarding with Parents">Boarding with Parents</option>
+							<option value="Own a home - with a mortgage">Own a home - with a mortgage</option>
+							<option value="Own a home - mortgage paid off">Own a home - mortgage paid off</option>
+							<option value="Supplied by employer">Supplied by employer</option>
+							<option value="Boarding other">Boarding other</option>
+						</select>
+					</div>
+				</div>
+			</div>
+			<lightning-input label="Home address" disabled="true" class="home-add">
+			</lightning-input>
+			<br>
+			<template if:false={isHit}>
+				<lightning-input type="checkbox" label="Update adress details"
+				onchange={hasOrNotUpdatedAddress}></lightning-input>
+				<br>
+				<template if:true={updateAddress}>
+					<lightning-input type="text" label="Unit number (if relevant)" onchange={unitNumHandler} class="unit-num" value={selectedUnitNo}>
+					</lightning-input>
+					<lightning-input type="text" label="Street number" onchange={streetNumHandler} class="street-num" required={updateAddress} value={selectedStreetNum}>
+					</lightning-input>
+					<lightning-input type="text" label="Street name" onchange={streetNameHandler} class="street-name" required={updateAddress} value={selectedStreetName}>
+					</lightning-input>
+					<div class="dropdown">
+						<lightning-input type="text" class="dropdown-input street-type" label="Street type"
+							onclick={handleDropdownClick} required={updateAddress} value={selectedStreetType} onchange={streetTypeHandler}>
+						</lightning-input>
+						<ul class="dropdown-list slds-dropdown slds-dropdown_length-with-icon-10 slds-dropdown_fluid"
+							role="menu" if:true={showItems}>
+							<template for:each={allOptions} for:item="option">
+								<li key={option} class="slds-dropdown__item" role="presentation"
+									onclick={handleOptionClick}>
+									{option}
+								</li>
+							</template>
+						</ul>
+					</div>
+					<lightning-input type="text" label="Suburb/Rural delivery number" onchange={stateHandler} class="city" required={updateAddress} value={selectedState}>
+					</lightning-input>
+					<lightning-input type="text" label="Town/City" onchange={cityHandler} class="city" required={updateAddress} value={selectedCity}>
+					</lightning-input>
+					<lightning-input type="text" label="Postcode" onchange={postCodeHandler} class="post-code" required={updateAddress} value={selectedPostCode}>
+					</lightning-input>
+					<lightning-input type="text" label="Property name (optional)" onchange={propertyHandler} class="prop-name" value={selectedProperty}>
+					</lightning-input>
+				</template>
+				<template if:true={fixedProduct}>
+					<h2 class="font-utility-heading slds-m-bottom_medium">
+						NZ Driver License Details
+					</h2>
+					<lightning-input type="checkbox" label="Applicant doesn't have a driver's license"
+						onchange={hasOrNotDrivingLicense} value = {noLicense}></lightning-input>
+					<br>
+					<template if:false={noLicense}>
+						<lightning-input type="text" label="NZ Driver's License Number" onchange={licenseNumHandler} pattern="^[a-z,A-Z]{2}[0-9]{6}$" message-when-pattern-mismatch="Please Enter Valid Driver License Number" required={hasLicense}>
+						</lightning-input>
+
+						<lightning-input type="text" label="Version Number" onchange={versionNumberHandler} pattern="^[0-9]{3}$" message-when-pattern-mismatch="Please Enter Valid Version Number"  required={hasLicense}>
+						</lightning-input>
+						<lightning-input type="Date" label="Expiry Date" onchange={expiryDateHandler} name="expiryDate" min={currentDate} required={hasLicense}></lightning-input>
+					</template>
+					<br>
+				</template>
+				<template if:true={fixedProduct}>
+					<div class="consent-section">
+						<ul class="consent-list">
+							<li>
+								I authorise Latitude Financial Services to contact a Credit Reporting Body and request my credit
+								report (which won't affect my Credit Score).
+							</li>
+							<li>
+								I understand that my credit score won't be affected unless I decide to complete a full
+								application at a later stage. I may determine not to continue at any time.
+							</li>
+							<li>
+								I have read and understood Latitude's Important
+								<a href="https://assets.latitudefinancial.com/brochures/nz/latitudemoney/Important_Privacy_Notice.pdf" target="_blank">&nbsp;Privacy Notice</a>.
+							</li>
+						</ul>
+						<lightning-input type="checkbox" label="I agree to the above" class="consents-checkbox"
+							onchange={agreedOrNot} ></lightning-input>
+					</div>
+				</template>
+			</template>
+			<div class="rate-estimate-wrapper">
+				<button class="neumorphic-button rate-calculate" title="Get Rate" onclick={getRepaymentDetails} disabled={submitHit}>Get
+					Rate</button>
+			</div>
+			<template if:true={isHit}>
+
+				<lightning-input data-formfield="Repayment_Frequency" label="Repayment amount" disabled="true" value = {estMonthlyRepayment}>
+			  
+				</lightning-input>
+
+				<lightning-input type="text" data-formfield="New_Top_up_loan_amt" label="Repayment frequency" disabled="true"
+				value={selectedFreq}></lightning-input>
+
+				<lightning-input data-formfield="Interest_rate" label="Interest rate" disabled="true" value = {irate}></lightning-input>
+				<lightning-input data-formfield="New_Top_up_loan_amt" label="Top up amount requested" disabled="true" value = {topupAmount}>
+			  
+				</lightning-input>
+				<lightning-input type="text" data-formfield="LEFPERCENTAmount" label="Loan term" disabled="true"
+				value={selectedTerm}>
+				</lightning-input>
+				<lightning-input type="text" data-formfield="LEFPERCENTAmount" label="Loan type" disabled="true"
+				value={topupLoanType}>
+				</lightning-input>
+				<lightning-input data-formfield="LEFPERCENTAmount" label="Loan establishment fee" disabled="true" value = {topupLef}>
+			  
+				</lightning-input>
+
+				<lightning-input data-formfield="Current_Loan_Balance" label="Outstanding loan balance" disabled="true" value={outStandingLoanBal}>
+			  
+				</lightning-input>
+				<lightning-input data-formfield="New_Top_up_loan_amt" label="Total loan amount" disabled="true" value = {totalLoanAmount}>
+				</lightning-input>
+				<br>
+			  <div><b>Subjected to Credit Approval:</b></div>
+				<div>Figures quoted are indicative and subject to the completion of a loan application. 
+					If you choose to apply, we'll need to assess your current financial situation. 
+					This includes income, expenses, and existing debt verification.
+					 This ensures the loan is affordable and meets your needs.</div>
+					 <br>
+				<div class="slds-m-top_small slds-m-bottom_medium" style="padding: 0;margin: 20px auto;width: 20%;">
+					<lightning-button label="Submit" onclick={createApp} disabled={submitHit}></lightning-button>
+				</div>
+			</template>
+		</div>
+	</div>
+</template>
